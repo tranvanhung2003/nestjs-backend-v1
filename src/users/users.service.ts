@@ -1,8 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  GoneException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 
@@ -32,8 +39,18 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException('id không hợp lệ', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.userModel.findOne({ _id: id });
+
+    if (!user) {
+      throw new HttpException('không tìm thấy user', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
