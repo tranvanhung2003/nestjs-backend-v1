@@ -52,7 +52,11 @@ export class UsersService {
     );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new HttpException('id không hợp lệ', HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.userModel.deleteOne({ _id: id });
   }
 }
