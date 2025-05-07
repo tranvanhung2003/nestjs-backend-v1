@@ -1,17 +1,10 @@
-import {
-  BadRequestException,
-  GoneException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import * as bcrypt from 'bcryptjs';
+import { Model, Types } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
-import mongoose, { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -25,14 +18,13 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const hashPassword = this.getHashPassword(createUserDto.password);
-    const user = await this.userModel.create({
-      email: createUserDto.email,
-      password: hashPassword,
-      name: createUserDto.name,
-    });
+    const { password, ...restCreateUserDto } = createUserDto;
+    const hashPassword = this.getHashPassword(password);
 
-    return user;
+    return await this.userModel.create({
+      ...restCreateUserDto,
+      password: hashPassword,
+    });
   }
 
   findAll() {
@@ -40,7 +32,7 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!Types.ObjectId.isValid(id)) {
       throw new HttpException('id không hợp lệ', HttpStatus.BAD_REQUEST);
     }
 
@@ -53,8 +45,11 @@ export class UsersService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(updateUserDto: UpdateUserDto) {
+    return await this.userModel.updateOne(
+      { _id: updateUserDto._id },
+      updateUserDto,
+    );
   }
 
   remove(id: number) {
