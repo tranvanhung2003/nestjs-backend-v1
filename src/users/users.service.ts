@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
-import { Model, Types } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
@@ -32,7 +32,7 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    if (!Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('id không hợp lệ', HttpStatus.BAD_REQUEST);
     }
 
@@ -53,7 +53,7 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    if (!Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('id không hợp lệ', HttpStatus.BAD_REQUEST);
     }
 
