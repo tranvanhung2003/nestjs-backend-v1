@@ -27,8 +27,8 @@ export class UsersService {
     });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return await this.userModel.find();
   }
 
   async findOne(id: string) {
@@ -43,6 +43,20 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async findOneByUsername(username: string) {
+    const user = await this.userModel.findOne({ email: username });
+
+    if (!user) {
+      throw new HttpException('không tìm thấy user', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
+  }
+
+  isValidPassword(password: string, hash: string) {
+    return bcrypt.compareSync(password, hash);
   }
 
   async update(updateUserDto: UpdateUserDto) {
