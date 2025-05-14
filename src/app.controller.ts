@@ -7,7 +7,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('/login')
+  @Post('login')
   handleLogin(@Request() req) {
     return req.user;
   }
