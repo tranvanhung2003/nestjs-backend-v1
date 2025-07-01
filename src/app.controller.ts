@@ -7,7 +7,8 @@ export class AppController {
 
   @Get()
   @Render('home')
-  getHello() {
-    // return this.appService.getHello();
+  handleHomePage(): { message: string } {
+    const message = this.appService.getHello();
+    return { message };
   }
 }
