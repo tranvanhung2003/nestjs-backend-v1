@@ -32,16 +32,18 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return 'Invalid user ID format';
     }
 
-    return this.userModel.findOne({ _id: id });
+    return await this.userModel.findOne({ _id: id });
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(updateUserDto: UpdateUserDto) {
+    const { _id, ...updateData } = updateUserDto;
+
+    return await this.userModel.updateOne({ _id }, updateData);
   }
 
   remove(id: string) {
