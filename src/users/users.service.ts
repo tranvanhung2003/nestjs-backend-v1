@@ -46,7 +46,11 @@ export class UsersService {
     return await this.userModel.updateOne({ _id }, updateData);
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return 'Invalid user ID format';
+    }
+
+    return await this.userModel.deleteOne({ _id: id });
   }
 }
