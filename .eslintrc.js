@@ -24,7 +24,7 @@ module.exports = {
     // custom configurations
     '@typescript-eslint/no-unused-vars': 'off',
     'prettier/prettier': [
-      'warn',
+      'error',
       {
         endOfLine: 'auto',
       },
