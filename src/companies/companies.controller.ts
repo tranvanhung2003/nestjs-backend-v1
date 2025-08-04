@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { User } from 'src/decorator/customize';
 import { IUser } from 'src/users/users.interface';
@@ -23,8 +24,8 @@ export class CompaniesController {
   }
 
   @Get()
-  findAll() {
-    return this.companiesService.findAll();
+  findAll(@Query() qs: string) {
+    return this.companiesService.findAll(qs);
   }
 
   @Get(':id')
