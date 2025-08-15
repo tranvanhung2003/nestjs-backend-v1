@@ -16,11 +16,13 @@ export class CompaniesService {
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto, user: IUser) {
+    const { _id, email } = user;
+
     return await this.companyModel.create({
       ...createCompanyDto,
       createdBy: {
-        _id: user._id,
-        email: user.email,
+        _id,
+        email,
       },
     });
   }
@@ -78,12 +80,14 @@ export class CompaniesService {
       return 'Invalid company ID format';
     }
 
+    const { _id, email } = user;
+
     await this.companyModel.updateOne(
       { _id: id },
       {
         deletedBy: {
-          _id: user._id,
-          email: user.email,
+          _id,
+          email,
         },
       },
     );

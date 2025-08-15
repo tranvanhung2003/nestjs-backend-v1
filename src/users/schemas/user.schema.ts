@@ -53,17 +53,17 @@ export class User {
     email: string;
   };
 
-  // @Prop()
-  // createdAt: Date;
+  @Prop()
+  createdAt: Date;
 
-  // @Prop()
-  // updatedAt: Date;
+  @Prop()
+  updatedAt: Date;
 
-  // @Prop()
-  // isDeleted: boolean;
+  @Prop()
+  isDeleted: boolean;
 
-  // @Prop()
-  // deletedAt: Date;
+  @Prop()
+  deletedAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
