@@ -1,6 +1,7 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
-import { Public, ResponseMessage } from 'src/decorator/customize';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { RegisterUserDto } from 'src/users/dto/create-user.dto';
+import { IUser } from 'src/users/users.interface';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 
@@ -11,8 +12,9 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  handleLogin(@Request() req) {
-    return this.authService.login(req.user);
+  @ResponseMessage('User login')
+  handleLogin(@User() user: IUser) {
+    return this.authService.login(user);
   }
 
   @Public()
