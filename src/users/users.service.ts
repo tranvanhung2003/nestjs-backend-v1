@@ -154,4 +154,17 @@ export class UsersService {
       createdAt,
     };
   }
+
+  async updateUserToken(id: string, refreshToken: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('Invalid user ID format');
+    }
+
+    return await this.userModel.updateOne(
+      { _id: id },
+      {
+        refreshToken,
+      },
+    );
+  }
 }

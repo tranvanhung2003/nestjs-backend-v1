@@ -2,6 +2,7 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -25,6 +26,9 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  // config cookies
+  app.use(cookieParser());
 
   // config CORS
   app.enableCors({
