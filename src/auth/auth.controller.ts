@@ -1,5 +1,13 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
-import { Response } from 'express';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { IUser } from 'src/users/users.interface';
@@ -29,5 +37,14 @@ export class AuthController {
   @ResponseMessage('Get user information')
   handleGetAccount(@User() user: IUser) {
     return { user };
+  }
+
+  @Public()
+  @Get('refresh')
+  @ResponseMessage('Get user by refresh token')
+  handleRefreshToken(@Req() req: Request) {
+    const refreshToken = req.cookies['refresh_token'];
+
+    return this.authService.processNewToken(refreshToken);
   }
 }
