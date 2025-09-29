@@ -29,28 +29,27 @@ export class CompaniesService {
 
   async findAll(qs: string) {
     const {
-      filter: { page, ...restFilter },
-      limit = 10,
+      filter: { current, pageSize = 10, ...restFilter },
       sort,
       projection,
       population,
     } = aqp(qs);
-    const offset = (+page - 1) * limit;
+    const offset = (current - 1) * pageSize;
     const totalItems = (await this.companyModel.find(restFilter)).length;
-    const totalPages = Math.ceil(totalItems / limit);
+    const totalPages = Math.ceil(totalItems / pageSize);
 
     const result = await this.companyModel
       .find(restFilter)
       .skip(offset)
-      .limit(limit)
+      .limit(pageSize)
       .sort(sort as any)
       .select(projection)
       .populate(population);
 
     return {
       meta: {
-        current: +page,
-        pageSize: limit,
+        current,
+        pageSize,
         pages: totalPages,
         total: totalItems,
       },
