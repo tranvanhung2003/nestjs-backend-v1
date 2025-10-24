@@ -16,7 +16,6 @@ import { UpdateFileDto } from './dto/update-file.dto';
 import { FilesService } from './files.service';
 
 @Controller('files')
-@UseInterceptors(FileInterceptor('file'))
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
@@ -29,7 +28,7 @@ export class FilesController {
           fileType:
             /^(jpg|jpeg|png|image\/png|gif|txt|pdf|application\/pdf|doc|docx|text\/plain)$/i,
         })
-        .addMaxSizeValidator({ maxSize: 1024 ** 2 })
+        .addMaxSizeValidator({ maxSize: 1024 * 1024 })
         .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
     )
     file: Express.Multer.File,
