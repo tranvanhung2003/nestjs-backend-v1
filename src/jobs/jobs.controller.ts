@@ -8,7 +8,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ResponseMessage, User } from 'src/decorator/customize';
+import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/users/users.interface';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
@@ -24,12 +24,14 @@ export class JobsController {
     return this.jobsService.create(createJobDto, user);
   }
 
+  @Public()
   @Get()
   @ResponseMessage('Fetch list job with pagination')
   findAll(@Query() qs: string) {
     return this.jobsService.findAll(qs);
   }
 
+  @Public()
   @Get(':id')
   @ResponseMessage('Fetch a job by id')
   findOne(@Param('id') id: string) {
