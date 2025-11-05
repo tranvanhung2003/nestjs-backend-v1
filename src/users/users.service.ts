@@ -84,11 +84,19 @@ export class UsersService {
       return 'Invalid user ID format';
     }
 
-    return await this.userModel.findOne({ _id: id }).select('-password');
+    return await this.userModel
+      .findOne({ _id: id })
+      .select('-password')
+      .populate({
+        path: 'role',
+        select: { _id: 1, name: 1 },
+      });
   }
 
   async findOneByUsername(username: string) {
-    return await this.userModel.findOne({ email: username });
+    return await this.userModel
+      .findOne({ email: username })
+      .populate({ path: 'role', select: { name: 1, permissions: 1 } });
   }
 
   isValidPassword(password: string, hash: string) {
@@ -116,6 +124,12 @@ export class UsersService {
     }
 
     const { _id, email } = user;
+
+    const foundUser = await this.userModel.findById(id);
+
+    if (foundUser.email === 'admin@gmail.com') {
+      throw new BadRequestException('Không thể xóa tài khoản admin@gmail.com');
+    }
 
     await this.userModel.updateOne(
       { _id: id },

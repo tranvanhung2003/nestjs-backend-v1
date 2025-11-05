@@ -79,21 +79,13 @@ export class RolesService {
 
     return (await this.roleModel.findById(id)).populate({
       path: 'permissions',
-      select: { _id: 1, apiPath: 1, name: 1, method: 1 },
+      select: { _id: 1, apiPath: 1, name: 1, method: 1, module: 1 },
     });
   }
 
   async update(id: string, updateRoleDto: UpdateRoleDto, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new BadRequestException('Not found role');
-    }
-
-    const isExist = await this.roleModel.findOne({ name: updateRoleDto.name });
-
-    if (isExist) {
-      throw new BadRequestException(
-        `Role với name=${updateRoleDto.name} đã tồn tại`,
-      );
     }
 
     return await this.roleModel.updateOne(
@@ -111,6 +103,12 @@ export class RolesService {
   async remove(id: string, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new BadRequestException('Not found role');
+    }
+
+    const foundRole = await this.roleModel.findById(id);
+
+    if (foundRole.name === 'ADMIN') {
+      throw new BadRequestException('Không thể xóa role ADMIN');
     }
 
     await this.roleModel.updateOne(
