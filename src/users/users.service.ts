@@ -4,6 +4,8 @@ import aqp from 'api-query-params';
 import * as bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { USER_ROLE } from 'src/databases/sample';
+import { Role, RoleDocument } from 'src/roles/schema/role.schema';
 import { CreateUserDto, RegisterUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
@@ -14,6 +16,8 @@ export class UsersService {
   constructor(
     @InjectModel(User.name)
     private readonly userModel: SoftDeleteModel<UserDocument>,
+    @InjectModel(Role.name)
+    private readonly roleModel: SoftDeleteModel<RoleDocument>,
   ) {}
 
   getHashPassword(password: string) {
@@ -96,7 +100,7 @@ export class UsersService {
   async findOneByUsername(username: string) {
     return await this.userModel
       .findOne({ email: username })
-      .populate({ path: 'role', select: { name: 1, permissions: 1 } });
+      .populate({ path: 'role', select: { name: 1 } });
   }
 
   isValidPassword(password: string, hash: string) {
@@ -153,11 +157,14 @@ export class UsersService {
       );
     }
 
+    // fetch user role
+    const userRole = await this.roleModel.findOne({ name: USER_ROLE });
+
     const hashPassword = this.getHashPassword(registerUserDto.password);
     const newRegister = await this.userModel.create({
       ...registerUserDto,
       password: hashPassword,
-      role: 'USER',
+      role: userRole?._id,
     });
 
     const { _id, createdAt } = newRegister;
@@ -182,6 +189,9 @@ export class UsersService {
   }
 
   async findUserByToken(refreshToken: string) {
-    return await this.userModel.findOne({ refreshToken });
+    return await this.userModel.findOne({ refreshToken }).populate({
+      path: 'role',
+      select: { name: 1 },
+    });
   }
 }

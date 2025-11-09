@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { ADMIN_ROLE } from 'src/databases/sample';
 import { IUser } from 'src/users/users.interface';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -107,7 +108,7 @@ export class RolesService {
 
     const foundRole = await this.roleModel.findById(id);
 
-    if (foundRole.name === 'ADMIN') {
+    if (foundRole.name === ADMIN_ROLE) {
       throw new BadRequestException('Không thể xóa role ADMIN');
     }
 

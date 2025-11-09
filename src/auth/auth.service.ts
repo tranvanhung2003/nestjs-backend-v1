@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import ms from 'ms';
+import { RolesService } from 'src/roles/roles.service';
 import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { IUser } from 'src/users/users.interface';
 import { UsersService } from 'src/users/users.service';
@@ -13,6 +14,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly rolesService: RolesService,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -26,11 +28,19 @@ export class AuthService {
       return null;
     }
 
-    return user;
+    const userRole = user.role as unknown as { _id: string; name: string };
+    const temp = await this.rolesService.findOne(userRole._id);
+
+    const objUser = {
+      ...user.toObject(),
+      permissions: temp?.permissions ?? [],
+    };
+
+    return objUser;
   }
 
   async login(user: IUser, res: Response) {
-    const { _id, name, email, role } = user;
+    const { _id, name, email, role, permissions } = user;
     const payload = {
       iss: 'from server',
       _id,
@@ -65,6 +75,7 @@ export class AuthService {
         name,
         email,
         role,
+        permissions,
       },
     };
   }
@@ -119,6 +130,10 @@ export class AuthService {
       // update user with refresh token
       await this.usersService.updateUserToken(_id.toString(), newRefreshToken);
 
+      // fetch user's role
+      const userRole = user.role as unknown as { _id: string; name: string };
+      const temp = await this.rolesService.findOne(userRole._id);
+
       // set refresh_token as cookies
       res.clearCookie('refresh_token');
       res.cookie('refresh_token', newRefreshToken, {
@@ -133,6 +148,7 @@ export class AuthService {
           name,
           email,
           role,
+          permissions: temp?.permissions ?? [],
         },
       };
     } catch (error) {
