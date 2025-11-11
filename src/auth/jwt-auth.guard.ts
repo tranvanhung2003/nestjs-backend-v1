@@ -43,14 +43,18 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     // check permissions
     const targetMethod = req.method;
-    const targetEndpoint = req.route?.path;
+    const targetEndpoint = req.route?.path as string;
 
     const permissions = user?.permissions ?? [];
-    const isExist = permissions.find(
+    let isExist = permissions.some(
       (permission) =>
         targetMethod === permission.method &&
-        targetEndpoint === permission.endpoint,
+        targetEndpoint === permission.apiPath,
     );
+
+    if (targetEndpoint.startsWith('/api/v1/auth')) {
+      isExist = true;
+    }
 
     if (!isExist) {
       throw new ForbiddenException(
