@@ -18,7 +18,7 @@ export class MailController {
       to: 'tranvanhan29042007@gmail.com',
       from: '"Support Team" <support@example.com>', // override default from
       subject: 'Welcome to Nice App! Confirm your Email',
-      html: '<b>welcome to Trần Văn Hưng</b>', // HTML body content
+      template: 'test',
     });
   }
 }
