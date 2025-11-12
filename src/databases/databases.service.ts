@@ -27,7 +27,7 @@ export class DatabasesService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    const isInit = this.configService.get<boolean>('SHOULD_INIT');
+    const isInit = this.configService.get<string>('SHOULD_INIT') === 'true';
 
     if (!isInit) {
       return;

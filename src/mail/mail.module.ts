@@ -25,7 +25,7 @@ import { MailService } from './mail.service';
             strict: true,
           },
         },
-        preview: configService.get<boolean>('EMAIL_PREVIEW', false),
+        preview: configService.get<string>('EMAIL_PREVIEW') === 'true',
       }),
       inject: [ConfigService],
     }),

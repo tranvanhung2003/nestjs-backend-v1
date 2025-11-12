@@ -45,6 +45,6 @@ async function bootstrap() {
     defaultVersion: ['1', '2'],
   });
 
-  await app.listen(configService.get<number>('PORT'));
+  await app.listen(Number(configService.get<string>('PORT')));
 }
 bootstrap();
