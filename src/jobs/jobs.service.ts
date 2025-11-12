@@ -100,4 +100,10 @@ export class JobsService {
 
     return await this.jobModel.softDelete({ _id: id });
   }
+
+  async findJobsWithMatchingSkills(skills: string[]) {
+    const regexSkills = skills.map((skill) => new RegExp(`^${skill}$`, 'i'));
+
+    return await this.jobModel.find({ skills: { $in: regexSkills } });
+  }
 }

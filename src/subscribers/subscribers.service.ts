@@ -118,4 +118,8 @@ export class SubscribersService {
 
     return await this.subscriberModel.softDelete({ _id: id });
   }
+
+  async find() {
+    return await this.subscriberModel.find();
+  }
 }
