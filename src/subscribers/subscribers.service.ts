@@ -80,15 +80,11 @@ export class SubscribersService {
     return await this.subscriberModel.findById(id);
   }
 
-  async update(
-    id: string,
-    updateSubscriberDto: UpdateSubscriberDto,
-    user: IUser,
-  ) {
+  async update(updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
     const { _id, email } = user;
 
     return await this.subscriberModel.updateOne(
-      { _id: id },
+      { email: user.email },
       {
         ...updateSubscriberDto,
         updatedBy: {
@@ -96,6 +92,7 @@ export class SubscribersService {
           email,
         },
       },
+      { upsert: true },
     );
   }
 
@@ -121,5 +118,12 @@ export class SubscribersService {
 
   async find() {
     return await this.subscriberModel.find();
+  }
+
+  async getSkills(user: IUser) {
+    return await this.subscriberModel.findOne(
+      { email: user.email },
+      { skills: 1 },
+    );
   }
 }
