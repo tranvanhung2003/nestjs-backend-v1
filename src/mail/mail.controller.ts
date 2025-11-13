@@ -1,11 +1,13 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Controller, Get } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
+import { ApiTags } from '@nestjs/swagger';
 import { Public, ResponseMessage } from 'src/decorator/customize';
 import { JobsService } from 'src/jobs/jobs.service';
 import { SubscribersService } from 'src/subscribers/subscribers.service';
 import { MailService } from './mail.service';
 
+@ApiTags('Mail')
 @Controller('mail')
 export class MailController {
   constructor(
@@ -15,10 +17,10 @@ export class MailController {
     private readonly jobsService: JobsService,
   ) {}
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
-  async testCron() {
-    console.log('>>> call me every 30 seconds');
-  }
+  // @Cron(CronExpression.EVERY_30_SECONDS)
+  // async testCron() {
+  //   console.log('>>> call me every 30 seconds');
+  // }
 
   @Get()
   @Public()
