@@ -107,13 +107,15 @@ export class UsersService {
     return bcrypt.compareSync(password, hash);
   }
 
-  async update(updateUserDto: UpdateUserDto, user: IUser) {
-    const { _id, ...updateData } = updateUserDto;
+  async update(id: string, updateUserDto: UpdateUserDto, user: IUser) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException(`Not found user with id = ${id}`);
+    }
 
     return await this.userModel.updateOne(
-      { _id },
+      { _id: id },
       {
-        ...updateData,
+        ...updateUserDto,
         updatedBy: {
           _id: user._id,
           email: user.email,
