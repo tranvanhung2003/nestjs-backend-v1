@@ -1,7 +1,6 @@
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { join } from 'path';
 import { JobsModule } from 'src/jobs/jobs.module';
 import { SubscribersModule } from 'src/subscribers/subscribers.module';
 import { MailController } from './mail.controller';
@@ -21,13 +20,13 @@ import { MailService } from './mail.service';
             pass: configService.get<string>('EMAIL_AUTH_PASS'),
           },
         },
-        template: {
-          dir: join(__dirname, 'templates'),
-          // adapter: new HandlebarsAdapter(),
-          options: {
-            strict: true,
-          },
-        },
+        // template: {
+        //   dir: join(__dirname, 'templates'),
+        //   adapter: new HandlebarsAdapter(),
+        //   options: {
+        //     strict: true,
+        //   },
+        // },
         preview: configService.get<string>('EMAIL_PREVIEW') === 'true',
       }),
       inject: [ConfigService],
